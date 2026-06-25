@@ -1,7 +1,11 @@
+
 {
   "name": "college-discovery-platform",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+  "seed": "tsx prisma/seed.ts"
+},
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,6 +15,7 @@
   "dependencies": {
     "@prisma/client": "^6.19.3",
     "next": "16.2.9",
+    "pg": "^8.22.0",
     "prisma": "^6.19.3",
     "react": "19.2.4",
     "react-dom": "19.2.4"
@@ -23,6 +28,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }

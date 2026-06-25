@@ -8,40 +8,37 @@ datasource db {
 }
 
 model User {
-  id        String @id @default(cuid())
-  email     String @unique
-  password  String
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
 
   savedColleges SavedCollege[]
 }
 
 model College {
-  id          String @id @default(cuid())
+  id         String   @id @default(cuid())
+  name       String
+  location   String
+  fees       Int
+  rating     Float
 
-  name        String
-  location    String
+  placements String?
+  overview   String?
+  imageUrl   String?
 
-  fees        Int
-  rating      Float
+  createdAt  DateTime @default(now())
 
-  placements  Int
-
-  overview    String?
-  imageUrl    String?
-
-  createdAt   DateTime @default(now())
-
-  savedBy     SavedCollege[]
+  savedBy    SavedCollege[]
 }
 
 model SavedCollege {
-  id         String @id @default(cuid())
+  id        String @id @default(cuid())
 
-  userId     String
-  collegeId  String
+  userId    String
+  collegeId String
 
-  user       User @relation(fields: [userId], references: [id])
-  college    College @relation(fields: [collegeId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+  college   College @relation(fields: [collegeId], references: [id])
 
   @@unique([userId, collegeId])
 }
