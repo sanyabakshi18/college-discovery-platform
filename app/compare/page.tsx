@@ -29,11 +29,16 @@ export default function ComparePage() {
 
     const fetchComparison = async () => {
       try {
-        const res = await fetch(
-          `/api/colleges/compare?ids=${ids}`
-        );
+       const res = await fetch(
+  `/api/colleges?page=${page}&limit=${limit}&search=${search}`
+);
 
-        const data = await res.json();
+console.log("Status:", res.status);
+
+const text = await res.text();
+console.log("Response:", text);
+
+const data = JSON.parse(text);
 
         console.log(data);
 
