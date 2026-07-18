@@ -20,19 +20,25 @@ export default function HomePage() {
 
   const [search, setSearch] = useState("");
 
+  const [selectedColleges, setSelectedColleges] = useState<string[]>([]);
+
   const limit = 6;
 
   const fetchColleges = async () => {
     setLoading(true);
 
-    const res = await fetch(
-      `/api/colleges?page=${page}&limit=${limit}&search=${search}`
-    );
+    try {
+      const res = await fetch(
+        `/api/colleges?page=${page}&limit=${limit}&search=${search}`
+      );
 
-    const data = await res.json();
+      const data = await res.json();
 
-    setColleges(data.colleges || []);
-    setTotalPages(data.totalPages || 1);
+      setColleges(data.colleges || []);
+      setTotalPages(data.totalPages || 1);
+    } catch (error) {
+      console.error("Error fetching colleges:", error);
+    }
 
     setLoading(false);
   };
@@ -62,15 +68,34 @@ export default function HomePage() {
         />
       </div>
 
+      {/* Compare Button */}
+      <div className="flex justify-center mb-6">
+        <Link
+          href={`/compare?ids=${selectedColleges.join(",")}`}
+          className={`px-4 py-2 rounded-lg text-white ${
+            selectedColleges.length >= 2
+              ? "bg-blue-600 hover:bg-blue-700"
+              : "bg-gray-400 pointer-events-none"
+          }`}
+        >
+          Compare Selected ({selectedColleges.length})
+        </Link>
+      </div>
+
       {/* Loading */}
       {loading && (
-        <p className="text-center text-gray-500">Loading colleges...</p>
+        <p className="text-center text-gray-500">
+          Loading colleges...
+        </p>
       )}
 
-      {/* Empty */}
+      {/* Empty State */}
       {!loading && colleges.length === 0 && (
-        <p className="text-center text-gray-500">No colleges found.</p>
+        <p className="text-center text-gray-500">
+          No colleges found.
+        </p>
       )}
+      
 
       {/* Cards */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -79,26 +104,55 @@ export default function HomePage() {
             key={college.id}
             className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition"
           >
-            <h2 className="text-xl font-semibold">{college.name}</h2>
-            <p className="text-gray-600">{college.location}</p>
+            <h2 className="text-xl font-semibold">
+              {college.name}
+            </h2>
+
+            <p className="text-gray-600">
+              {college.location}
+              
+            </p>
 
             <div className="mt-2 text-sm text-gray-700">
               <p>💰 Fees: ₹{college.fees}</p>
               <p>⭐ Rating: {college.rating}</p>
             </div>
 
+            {/* Compare Checkbox */}
+            <div className="mt-3">
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={selectedColleges.includes(college.id)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      if (selectedColleges.length < 3) {
+                        setSelectedColleges([
+                          ...selectedColleges,
+                          college.id,
+                        ]);
+                      }
+                    } else {
+                      setSelectedColleges(
+                        selectedColleges.filter(
+                          (id) => id !== college.id
+                        )
+                      );
+                    }
+                  }}
+                />
+                Add to Compare
+              </label>
+            </div>
+
             {/* Actions */}
-            <div className="mt-4 flex justify-between">
+            <div className="mt-4">
               <Link
                 href={`/college/${college.id}`}
                 className="text-blue-600 hover:underline"
               >
                 View Details
               </Link>
-
-              <Link href={`/compare?ids=${college.id}`}>
-  Compare
-</Link>
             </div>
           </div>
         ))}
